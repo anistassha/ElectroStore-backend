@@ -61,6 +61,6 @@ public class AuthController {
         AppUser user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        return jwtUtil.generateToken(user.getUsername(), user.getRole());
+        return jwtUtil.generateToken(user.getId(), user.getUsername(), user.getRole());
     }
 }

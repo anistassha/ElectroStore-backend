@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/customers")
 @CrossOrigin("http://localhost:3000")
@@ -19,30 +21,26 @@ public class CustomerController {
         this.customerRepository = customerRepository;
     }
 
-    // Получить всех покупателей
     @GetMapping
     public ResponseEntity<List<Customer>> getAllCustomers() {
         List<Customer> customers = customerRepository.findAll();
         return ResponseEntity.ok(customers);
     }
 
-    // Получить покупателя по ID
     @GetMapping("/{id}")
     public ResponseEntity<Customer> getCustomerById(@PathVariable int id) {
         Optional<Customer> customer = customerRepository.findById(id);
         return customer.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Создать нового покупателя
     @PostMapping
-    public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
+    public ResponseEntity<Customer> createCustomer(@Valid @RequestBody Customer customer) {
         Customer savedCustomer = customerRepository.save(customer);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCustomer);
     }
 
-    // Обновить покупателя
     @PutMapping("/{id}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable int id, @RequestBody Customer customerDetails) {
+    public ResponseEntity<Customer> updateCustomer(@PathVariable int id, @Valid @RequestBody Customer customerDetails) {
 
         return customerRepository.findById(id).map(existingCustomer -> {
                     existingCustomer.setFirstName(customerDetails.getFirstName());
@@ -55,7 +53,6 @@ public class CustomerController {
                 }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Удалить покупателя
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable int id) {
         if (customerRepository.existsById(id)) {
@@ -65,7 +62,6 @@ public class CustomerController {
         return ResponseEntity.notFound().build();
     }
 
-    // Поиск покупателей по имени или фамилии
     @GetMapping("/search")
     public ResponseEntity<List<Customer>> searchCustomers(@RequestParam String query) {
         List<Customer> customers = customerRepository.findByFirstNameContainingOrLastNameContaining(query, query);

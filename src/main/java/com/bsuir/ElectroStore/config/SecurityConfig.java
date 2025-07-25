@@ -27,8 +27,7 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())  // Отключаем CSRF
                 .authorizeHttpRequests(auth -> auth
-                        //.requestMatchers("/auth/**").permitAll()  // Разрешаем доступ к эндпоинтам авторизации без аутентификации
-                        .anyRequest().permitAll() // Все остальные запросы требуют аутентификации
+                        .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)  // Добавляем фильтр JWT
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // Убираем сессии
